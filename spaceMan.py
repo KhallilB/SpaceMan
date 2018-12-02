@@ -59,4 +59,5 @@ def guessedWord(alreadyGuessed):
 
 def playAgain():
     'Function allows user to play again, otherwise returns false'
-    pass
+    print('Do you want to play again?(Y or N)')
+    return input().lower().startswith('y')
