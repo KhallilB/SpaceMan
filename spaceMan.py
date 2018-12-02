@@ -38,9 +38,23 @@ def userGuesses(correctGuess, wrongGuess, secretWord):
     print()
 
 
-def guessedWord():
-    'Gets user letter guess entered.'
-    pass
+def guessedWord(alreadyGuessed):
+    '''
+    Gets user letter guess entered.
+    Doesnt allow a repeat word.
+    Only lets them enter letters in alphabet.
+    '''
+    while True:
+        print('Guess a Letter!')
+        guess = input()
+        if len(guess) != 1:
+            print('Enter only one letter please.')
+        elif guess in alreadyGuessed:
+            print('You have already guessed this letter. Pick Again!')
+        elif guess not in 'abcdefghijklmonpqrstuvwxyz':
+            print('Enter a Letter.')
+        else:
+            return guess
 
 
 def playAgain():
