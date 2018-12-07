@@ -1,63 +1,139 @@
 import random
+SPACEMAN = ['''
+   +---+
+   |   |
+       |
+       |
+       |
+       |
+=========''', '''
+   +---+
+   |   |
+   O   |
+       |
+       |
+       | 
+=========''', '''
+   +---+
+   |   |
+   O   |
+   |   |
+       |
+       |
+=========''', '''
+   +---+
+   |   |
+   O   |
+  /|   |
+       |
+       |
+=========''', '''
+   +---+
+   |   |
+   O   |
+  /|\  |
+       |
+       |
+=========''', '''
+   +---+
+   |   |
+   O   |
+  /|\  |
+  /    |
+       |
+=========''', '''
+  +---+
+   |   |
+   O   |
+  /|\  |
+  / \  |
+       |
+=========''']
 
 
-def loadWords():
-    '''
-    Loads words from txt files,
-    splits them and chooses a random one.
-    '''
-    file = open('wordsToGuess.txt', 'r')
-    line = file.readline()
-    wordList = line.split()
-    file.close()
-    secretWord = random.choice(wordList)
-    return secretWord
+words = 'ant baboon badger bat bear beaver camel cat clam cobra cougar coyote crow deer dog donkey duck eagle ferret fox frog goat goose hawk lion lizard llama mole monkey moose mouse mule newt otter owl panda parrot pigeon python rabbit ram rat raven rhino salmon seal shark sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale wolf wombat zebra'.split()
 
 
-def userGuesses(correctGuess, wrongGuess, secretWord):
-    '''
-    Uses secret word to Guess.
-    Displays the number of letters correct,
-     and incorrect letter guesses.
-    '''
-    print([len(wrongGuess)])
+def getRandomWord(wordList):
+    wordIndex = random.randint(0, len(wordList) - 1)
+    return wordList[wordIndex]
 
-    print('Wrong Guesses', end='')
-    for letter in wrongGuess:
+
+def showGame(SPACEMAN, wrongLetter, correctLetter, secretWord):
+    print(SPACEMAN[len(wrongLetter)])
+    print()
+
+    print('Wrong Letters:', end='')
+    for letter in wrongLetter:
         print(letter, end='')
+    print()
 
-    blanks = ' ' * len(secretWord)
+    blanks = '_'*len(secretWord)
 
     for i in range(len(secretWord)):
-        if secretWord[i] in correctGuess:
-            blanks = blanks[:i] + secretWord[i] + blanks[i+1:]
+        if secretWord[i] in correctLetter:
+            blank = blanks[:i] + secretWord[i] + blanks[i+1:]
 
     for letter in blanks:
         print(letter, end='')
-
     print()
 
 
-def guessedWord(alreadyGuessed):
-    '''
-    Gets user letter guess entered.
-    Doesnt allow a repeat word.
-    Only lets them enter letters in alphabet.
-    '''
+def getGuess(alreadyGussesed):
     while True:
-        print('Guess a Letter!')
+        print('Guess a letter')
         guess = input()
+        guess = guess.lower()
         if len(guess) != 1:
-            print('Enter only one letter please.')
-        elif guess in alreadyGuessed:
-            print('You have already guessed this letter. Pick Again!')
-        elif guess not in 'abcdefghijklmonpqrstuvwxyz':
-            print('Enter a Letter.')
+            print('Enter one letter')
+        elif guess in alreadyGussesed:
+            print('You have already guessed that.')
+        elif guess not in 'abcdefghijklmnopqrstuvwxyz':
+            print('Please enter a Letter')
         else:
             return guess
 
 
 def playAgain():
-    'Function allows user to play again, otherwise returns false'
-    print('Do you want to play again?(Y or N)')
+    print('Do you want to play again? (Yes or No)')
     return input().lower().startswith('y')
+
+
+print('S P A C E M A N')
+wrongLetter = ''
+correctLetter = ''
+secretWord = getRandomWord(words)
+gameIsDone = False
+
+while True:
+    showGame(SPACEMAN, wrongLetter, correctLetter, secretWord)
+
+    guess = getGuess(wrongLetter + correctLetter)
+
+    if guess in secretWord:
+        correctLetter = correctLetter + guess
+
+        foundAllLetters = True
+        for i in range(len(secretWord)):
+            if secretWord[i] not in correctLetter:
+                foundAllLetters = False
+                break
+        if foundAllLetters:
+            print("You Win!")
+    else:
+        wrongLetter = wrongLetter + guess
+
+        if len(wrongLetter) == len(SPACEMAN) - 1:
+            showGame(SPACEMAN, wrongLetter, correctLetter, secretWord)
+            print('You have run out of guesses!\nAfter ' + str(len(wrongLetter)) + ' missed guesses and ' +
+                  str(len(correctLetter)) + ' correct guesses, the word was "' + secretWord + '"')
+            gameIsDone = True
+
+    if gameIsDone:
+        if playAgain():
+            wrongLetter = ''
+            correctLetter = ''
+            gameIsDone = False
+            secretWord = getRandomWord(words)
+        else:
+            break
